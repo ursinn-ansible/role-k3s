@@ -10,4 +10,4 @@
   ansible.builtin.copy:
     dest: "/etc/rancher/k3s/config.yaml"
     mode: 0644
-    content: {{ app_k3s_config }}
+    content: "{{ app_k3s_config }}"
