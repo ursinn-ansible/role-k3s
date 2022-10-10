@@ -1,0 +1,13 @@
+---
+- name: Create k3s-resolv config
+  ansible.builtin.copy:
+    dest: "/etc/k3s-resolv.conf"
+    mode: 0644
+    content: |
+     "nameserver 1.1.1.1"
+
+- name: Create k3s config
+  ansible.builtin.copy:
+    dest: "/etc/rancher/k3s/config.yaml"
+    mode: 0644
+    content: {{ app_k3s_config }}
