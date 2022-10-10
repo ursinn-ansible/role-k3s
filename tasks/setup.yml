@@ -6,6 +6,17 @@
     content: |
      "nameserver 1.1.1.1"
 
+- name: Create directorys
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: 0755
+  with_items:
+    - "/etc/rancher/k3s/"
+    - "/var/lib/rancher/k3s/server/manifests"
+
 - name: Create k3s config
   ansible.builtin.copy:
     content: "{{ app_k3s_config }}"
