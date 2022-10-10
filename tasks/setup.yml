@@ -8,6 +8,20 @@
 
 - name: Create k3s config
   ansible.builtin.copy:
-    dest: "/etc/rancher/k3s/config.yaml"
-    mode: 0644
     content: "{{ app_k3s_config }}"
+    dest: "/etc/rancher/k3s/config.yaml"
+    owner: "root"
+    group: "root"
+    mode: 0644
+    force: "{{app_k3s_force}}"
+
+- name: Copy Auto-Deploying Manifests
+  ansible.builtin.copy:
+    src: "{{ item }}.yaml"
+    dest: "/var/lib/rancher/k3s/server/manifests/{{ item }}.yaml"
+    owner: "root"
+    group: "root"
+    force: "{{app_k3s_force}}"
+    mode: 0644
+  with_items:
+    - "coredns"
