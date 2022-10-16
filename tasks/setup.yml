@@ -14,7 +14,7 @@
     group: "root"
     mode: 0755
   with_items:
-    - "/etc/rancher/k3s/"
+    - "/etc/rancher/k3s"
     - "/var/lib/rancher/k3s/server/manifests"
 
 - name: Create k3s config
@@ -23,8 +23,8 @@
     dest: "/etc/rancher/k3s/config.yaml"
     owner: "root"
     group: "root"
-    mode: 0644
     force: "{{app_k3s_force}}"
+    mode: 0644
 
 - name: Copy Auto-Deploying Manifests
   ansible.builtin.copy:
@@ -36,3 +36,6 @@
     mode: 0644
   with_items:
     - "coredns"
+    - "dashboard.recommended"
+    - "dashboard.admin-user"
+    - "dashboard.admin-user-role"
