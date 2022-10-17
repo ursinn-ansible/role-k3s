@@ -4,18 +4,18 @@
     dest: "/etc/k3s-resolv.conf"
     mode: 0644
     content: |
-     "nameserver 1.1.1.1"
+     nameserver 1.1.1.1
+     nameserver 1.0.0.1
+     nameserver 2606:4700:4700::1111
+     nameserver 2606:4700:4700::1001
 
-- name: Create directorys
+- name: Create k3s directory
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "/etc/rancher/k3s"
     state: directory
     owner: "root"
     group: "root"
     mode: 0755
-  with_items:
-    - "/etc/rancher/k3s"
-    - "/var/lib/rancher/k3s/server/manifests"
 
 - name: Create k3s config
   ansible.builtin.copy:
@@ -23,19 +23,38 @@
     dest: "/etc/rancher/k3s/config.yaml"
     owner: "root"
     group: "root"
-    force: "{{app_k3s_force}}"
+    force: true
     mode: 0644
 
-- name: Copy Auto-Deploying Manifests
+- name: Create symlink for /etc/resolv.conf
+  ansible.builtin.file:
+    src: "/etc/k3s-resolv.conf"
+    dest: "/etc/resolv.conf"
+    state: link
+
+- name: Copy K3s file
   ansible.builtin.copy:
-    src: "{{ item }}.yaml"
-    dest: "/var/lib/rancher/k3s/server/manifests/{{ item }}.yaml"
-    owner: "root"
-    group: "root"
-    force: "{{app_k3s_force}}"
-    mode: 0644
-  with_items:
-    - "coredns"
-    - "dashboard.recommended"
-    - "dashboard.admin-user"
-    - "dashboard.admin-user-role"
+    src: "k3s.service"
+    dest: "/etc/systemd/system/k3s.service"
+    owner: root
+    group: root
+    force: true
+    mode: 0755
+  when: inventory_hostname in groups['k3s_servers']
+
+- name: Copy K3s node service file
+  ansible.builtin.copy:
+    src: "k3s-node.service"
+    dest: "/etc/systemd/system/k3s.service"
+    owner: root
+    group: root
+    force: true
+    mode: 0755
+  when: inventory_hostname in groups['k3s_agents']
+
+- name: Enable and check K3s service
+  systemd:
+    name: k3s
+    daemon_reload: yes
+    state: restarted
+    enabled: yes

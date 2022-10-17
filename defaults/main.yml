@@ -2,4 +2,3 @@
 app_k3s_enabled: false
 app_k3s_config: |
  resolv-conf: "/etc/k3s-resolv.conf"
-app_k3s_force: true
