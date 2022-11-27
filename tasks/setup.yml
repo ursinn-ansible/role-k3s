@@ -1,8 +1,12 @@
 ---
 - name: Install packages
   ansible.builtin.package:
-    name: wireguard
+    name: "{{ item }}"
     state: latest
+  with_items: 
+    - wireguard
+    - open-iscsi
+    - nfs-common
 
 - name: Create k3s-resolv config
   ansible.builtin.copy:
