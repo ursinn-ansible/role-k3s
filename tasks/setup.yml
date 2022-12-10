@@ -44,11 +44,15 @@
   ansible.builtin.file:
     dest: "/var/lib/rancher/k3s/server/manifests/traefik.yaml.skip"
     state: touch
+    modification_time: preserve
+    access_time: preserve
 
 - name: Create local-storage.skip in auto-deploy
   ansible.builtin.file:
     dest: "/var/lib/rancher/k3s/server/manifests/local-storage.yaml.skip"
     state: touch
+    modification_time: preserve
+    access_time: preserve
 
 - name: Create symlink for /etc/resolv.conf
   ansible.builtin.file:
@@ -77,8 +81,8 @@
   when: inventory_hostname in groups['k3s_agents']
 
 - name: Enable and check K3s service
-  systemd:
+  ansible.builtin.systemd:
     name: k3s
     daemon_reload: yes
-    state: restarted
+    state: started
     enabled: yes
