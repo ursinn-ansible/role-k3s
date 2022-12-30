@@ -1,13 +1,14 @@
 [Unit]
 Description=Lightweight Kubernetes
 Documentation=https://k3s.io
+Wants=network-online.target
 After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
 
 [Service]
 Type=notify
-ExecStartPre=-/sbin/modprobe br_netfilter
-ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/usr/local/bin/k3s agent
 KillMode=process
 Delegate=yes
 # Having non-zero Limit*s causes performance problems due to accounting overhead
@@ -19,6 +20,8 @@ TasksMax=infinity
 TimeoutStartSec=0
 Restart=always
 RestartSec=5s
-
-[Install]
-WantedBy=multi-user.target
+ExecStartPre=-/sbin/modprobe br_netfilter
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/k3s \
+    agent \
+    --kubelet-arg allowed-unsafe-sysctls=net.ipv4.ip_forward
