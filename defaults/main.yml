@@ -2,3 +2,4 @@
 app_k3s_config: |
  resolv-conf: "/etc/k3s-resolv.conf"
  disable-local-storage: true
+app_k3s_node_ip: ""

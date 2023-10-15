@@ -60,9 +60,9 @@
     dest: "/etc/resolv.conf"
     state: link
 
-- name: Copy K3s file
-  ansible.builtin.copy:
-    src: "k3s.service"
+- name: Copy k3s service file
+  ansible.builtin.template:
+    src: "k3s.service.j2"
     dest: "/etc/systemd/system/k3s.service"
     owner: root
     group: root
@@ -70,19 +70,28 @@
     mode: 0755
   when: inventory_hostname in groups['k3s_servers']
 
-- name: Copy K3s node service file
-  ansible.builtin.copy:
-    src: "k3s-node.service"
-    dest: "/etc/systemd/system/k3s.service"
+- name: Copy k3s-agent service file
+  ansible.builtin.template:
+    src: "k3s-agent.service.j2"
+    dest: "/etc/systemd/system/k3s-agent.service"
     owner: root
     group: root
     force: true
     mode: 0755
   when: inventory_hostname in groups['k3s_agents']
 
-- name: Enable and check K3s service
+- name: Enable and check k3s service
   ansible.builtin.systemd:
     name: k3s
     daemon_reload: yes
     state: started
     enabled: yes
+  when: inventory_hostname in groups['k3s_servers']
+
+- name: Enable and check k3s-agent service
+  ansible.builtin.systemd:
+    name: k3s-agent
+    daemon_reload: yes
+    state: started
+    enabled: yes
+  when: inventory_hostname in groups['k3s_agents']
