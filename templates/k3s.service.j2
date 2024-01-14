@@ -31,5 +31,4 @@ ExecStart=/usr/local/bin/k3s \
     --kubelet-arg="node-ip=::" \
     --node-ip={{ app_k3s_node_ip }} \
 #    --kube-apiserver-arg service-node-port-range=1000-32767 \
-#    --disable traefik \
 #    --kubelet-arg=allowed-unsafe-sysctls=net.ipv4.ip_forward \
